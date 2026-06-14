@@ -1,0 +1,15 @@
+[theme]
+primaryColor = "#174A7E"
+backgroundColor = "#F3F8FC"
+secondaryBackgroundColor = "#E4F1FA"
+textColor = "#17324D"
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"
+
+[server]
+enableStaticServing = true
+
+[logger]
+level = "info"
