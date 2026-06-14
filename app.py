@@ -31,14 +31,12 @@ PAGES = [
     "Dashboard Overview",
     "Destinasi & Kategori",
     "Paket & Harga",
-    "Halaman 5",
 ]
 
 PAGE_LABELS = {
     "Dashboard Overview": "Dashboard Overview",
     "Destinasi & Kategori": "Destinasi & Kategori",
     "Paket & Harga": "Paket & Harga",
-    "Halaman 5": "Halaman 5",
 }
 CHART_PALETTE = ["#174A7E", "#2F6690", "#4E83B6", "#6E9FAD", "#89A9C1", "#AFC6D6"]
 CATEGORY_COLORS = {
@@ -615,12 +613,5 @@ elif page == "Paket & Harga":
         )
         show_chart(fig, height=500)
 
-elif page == "Halaman 5":
-    page_header(
-        page,
-        "Halaman ini disiapkan untuk visualisasi berikutnya sesuai instruksi Anda.",
-        "HALAMAN DALAM PENGEMBANGAN",
-    )
-    st.info("Belum ada visualisasi pada halaman ini.")
 
 render_footer()
