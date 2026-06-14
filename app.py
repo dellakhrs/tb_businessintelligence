@@ -497,6 +497,36 @@ elif page == "Destinasi & Kategori":
     )
     show_chart(fig, height=470)
 
+    age_rating = (
+        ratings.groupby("Age_Group", observed=True)
+        .agg(
+            avg_rating=("Place_Ratings", "mean"),
+            total_interaksi=("Place_Ratings", "count"),
+            pct_tinggi=("Place_Ratings", lambda x: (x >= 4).mean() * 100),
+        )
+        .reset_index()
+    )
+    age_rating["Age_Group"] = age_rating["Age_Group"].astype(str)
+    fig = px.line(
+        age_rating,
+        x="Age_Group",
+        y="avg_rating",
+        markers=True,
+        title="Tren Rating Pengguna Berdasarkan Kelompok Usia",
+        labels={"Age_Group": "Kelompok Usia", "avg_rating": "Rating Rata-rata"},
+        custom_data=["total_interaksi", "pct_tinggi"],
+    )
+    fig.update_traces(
+        line=dict(color=COLORS["primary"], width=3),
+        marker=dict(size=11, color=COLORS["primary"]),
+        hovertemplate=(
+            "<b>Usia %{x}</b><br>Rating rata-rata: %{y:.2f}"
+            "<br>Total interaksi: %{customdata[0]:,}"
+            "<br>Rating tinggi (≥4): %{customdata[1]:.1f}%<extra></extra>"
+        ),
+    )
+    show_chart(fig, height=420)
+
     price_data = add_price_tier(places[["Place_Id", "Category", "Price"]])
     price_structure = (
         price_data.groupby(["Category", "Price_Tier"], observed=True)
@@ -612,6 +642,41 @@ elif page == "Paket & Harga":
             hovertemplate="<b>%{customdata[0]}</b><br>Jumlah destinasi: %{customdata[1]}<br>Proporsi: %{percent}<extra></extra>",
         )
         show_chart(fig, height=500)
+
+    tier_rating = ratings.merge(
+        add_price_tier(places[["Place_Id", "Price"]])[["Place_Id", "Price_Tier"]],
+        on="Place_Id",
+        how="left",
+    )
+    tier_trend = (
+        tier_rating.groupby("Price_Tier", observed=True)
+        .agg(
+            avg_rating=("Place_Ratings", "mean"),
+            total_interaksi=("Place_Ratings", "count"),
+            pct_tinggi=("Place_Ratings", lambda x: (x >= 4).mean() * 100),
+        )
+        .reindex(PRICE_TIER_ORDER)
+        .reset_index()
+    )
+    fig = px.line(
+        tier_trend,
+        x="Price_Tier",
+        y="avg_rating",
+        markers=True,
+        title="Tren Harga Tiket dari Tier Terjangkau hingga Premium",
+        labels={"Price_Tier": "Tier Harga", "avg_rating": "Rating Rata-rata Pengguna"},
+        custom_data=["total_interaksi", "pct_tinggi"],
+    )
+    fig.update_traces(
+        line=dict(color=COLORS["primary"], width=3),
+        marker=dict(size=11, color=COLORS["primary"]),
+        hovertemplate=(
+            "<b>%{x}</b><br>Rating rata-rata: %{y:.2f}"
+            "<br>Total interaksi: %{customdata[0]:,}"
+            "<br>Rating tinggi (≥4): %{customdata[1]:.1f}%<extra></extra>"
+        ),
+    )
+    show_chart(fig, height=420)
 
 
 render_footer()
